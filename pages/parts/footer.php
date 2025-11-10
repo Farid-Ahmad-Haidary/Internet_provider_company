@@ -1,0 +1,1 @@
+<footer class="foot"><div>© <?=date('Y')?> Internet ISP (VULN)</div></footer>

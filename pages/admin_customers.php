@@ -1,0 +1,40 @@
+<?php include __DIR__ . '/../includes/db.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+  header('Location: index.php?p=login');
+  exit;
+}
+$res = $mysqli->query('SELECT id,name,activated_package FROM customers ORDER BY id DESC'); ?>
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Customers</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body><?php include 'parts/topbar.php'; ?><main class="container">
+    <h2>Customers</h2>
+    <p><a href="index.php?p=admin_customer_create">Create Customer</a></p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Package</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody><?php while ($r = $res->fetch_assoc()): ?><tr>
+            <td><?= $r['id'] ?></td>
+            <td><?= htmlspecialchars($r['name']) ?></td>
+            <td><?= htmlspecialchars($r['activated_package']) ?></td>
+            <td><a href="index.php?p=admin_customer_edit&id=<?= $r['id'] ?>">Edit</a> | <a href="index.php?p=admin_customer_delete&id=<?= $r['id'] ?>" onclick="return confirm('Delete?')">Delete</a></td>
+          </tr><?php endwhile; ?></tbody>
+    </table>
+  </main><?php include 'parts/footer.php'; ?></body>
+
+</html>
