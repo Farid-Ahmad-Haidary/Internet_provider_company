@@ -27,18 +27,20 @@ $res = $mysqli->query('SELECT id,name,password,field,salary FROM workers ORDER B
         text-decoration: none;
         border-radius: 6px;
         font-weight: 600;
-        box-shadow: 0 6px 18px rgba(13,110,253,0.12);
+        box-shadow: 0 6px 18px rgba(13, 110, 253, 0.12);
         transition: transform .12s ease, box-shadow .12s ease, background .12s;
-        border: 1px solid rgba(255,255,255,0.12);
+        border: 1px solid rgba(255, 255, 255, 0.12);
       }
+
       .create-worker-btn:hover {
         background: #0b5ed7;
         transform: translateY(-2px);
-        box-shadow: 0 10px 22px rgba(11,94,215,0.14);
+        box-shadow: 0 10px 22px rgba(11, 94, 215, 0.14);
       }
+
       .create-worker-btn:active {
         transform: translateY(0);
-        box-shadow: 0 6px 12px rgba(11,94,215,0.12);
+        box-shadow: 0 6px 12px rgba(11, 94, 215, 0.12);
       }
     </style>
     <p><a class="create-worker-btn" href="index.php?p=admin_worker_create" role="button">Create Worker</a></p>
