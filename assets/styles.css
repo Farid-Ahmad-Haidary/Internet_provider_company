@@ -2,8 +2,8 @@
   /* Palette (improved contrast + neutral accents) */
   --bg: #f3f6fb;
   --card: #ffffff;
-  --primary: #0b9488;      /* teal (accessible) */
-  --primary-600: #077a6f;  /* darker for hover */
+  --primary: #059669;      /* teal (accessible) */
+  --primary-600: #2855d1;  /* darker for hover */
   --secondary: #374151;    /* slate for secondary actions */
   --accent: #6366f1;       /* subtle purple accent */
   --muted: #6b7280;
