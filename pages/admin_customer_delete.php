@@ -1,5 +1,7 @@
 <?php include __DIR__ . '/../includes/db.php';
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
 if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
   header('Location: index.php?p=login');
   exit;

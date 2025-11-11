@@ -1,1 +1,13 @@
-<?php include __DIR__ . '/../includes/db.php'; session_start(); if (empty($_SESSION['user']) || $_SESSION['user']['role']!=='admin') { header('Location: index.php?p=login'); exit; } $id=intval($_GET['id']??0); $mysqli->query("DELETE FROM workers WHERE id=$id"); $mysqli->query("DELETE FROM users WHERE username='worker".$id."'"); header('Location: index.php?p=admin_workers'); exit; ?>
+<?php include __DIR__ . '/../includes/db.php';
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+  header('Location: index.php?p=login');
+  exit;
+}
+$id = intval($_GET['id'] ?? 0);
+$mysqli->query("DELETE FROM workers WHERE id=$id");
+$mysqli->query("DELETE FROM users WHERE username='worker" . $id . "'");
+header('Location: index.php?p=admin_workers');
+exit;
