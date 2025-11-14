@@ -16,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'] ?? $c['password'];
   $pkg = $_POST['activated_package'] ?? $c['activated_package'];
 
-  // VULNERABLE UPDATE - SQL INJECTION
+  // VULNERABLE SQL
   $mysqli->query("UPDATE customers SET name='$name', password='$password', activated_package='$pkg' WHERE id=$id");
-  
+
   $msg = 'Saved';
   $res = $mysqli->query("SELECT * FROM customers WHERE id = $id LIMIT 1");
   $c = $res->fetch_assoc();
@@ -29,23 +29,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Edit Customer</title>
-  <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body>
+<body style="margin:0;font-family:Arial;background:#ffffff;">
+
   <?php include 'parts/topbar.php'; ?>
-  <main class="container">
-    <h2>Edit Customer</h2>
-    <?php if ($msg) echo '<div class="success">' . htmlspecialchars($msg) . '</div>'; ?>
+
+  <main style="max-width:600px;margin:40px auto;padding:25px;
+               background:#fff;border-radius:10px;
+               box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+
+    <h2 style="margin-bottom:20px;color:#0b9488;">Edit Customer</h2>
+
+    <?php if ($msg) echo '<div style="padding:10px;background:#d4edda;color:#155724;border-radius:6px;margin-bottom:15px;">' . htmlspecialchars($msg) . '</div>'; ?>
+
     <form method="post">
-      <label>Name</label>
-      <input name="name" value="<?= $c['name'] ?>">
-      <label>Password</label>
-      <input name="password" value="<?= $c['password'] ?>">
-      <label>Activated Package</label>
-      <input name="activated_package" value="<?= $c['activated_package'] ?>">
-      <button>Save</button>
+
+      <label style="font-weight:bold;color:#333;">Name</label>
+      <input name="name" value="<?= $c['name'] ?>" 
+             style="width:100%;padding:10px;margin:6px 0 15px;
+             border:1px solid #ccc;border-radius:6px;">
+
+      <label style="font-weight:bold;color:#333;">Password</label>
+      <input name="password" value="<?= $c['password'] ?>" 
+             style="width:100%;padding:10px;margin:6px 0 15px;
+             border:1px solid #ccc;border-radius:6px;">
+
+      <label style="font-weight:bold;color:#333;">Activated Package</label>
+      <input name="activated_package" value="<?= $c['activated_package'] ?>" 
+             style="width:100%;padding:10px;margin:6px 0 20px;
+             border:1px solid #ccc;border-radius:6px;">
+
+      <button style="width:100%;padding:12px;
+                     background:linear-gradient(90deg, #0b9488, #0fd6bd);
+                     border:none;color:white;font-size:16px;
+                     border-radius:6px;cursor:pointer;">
+        Save
+      </button>
+
     </form>
   </main>
+
   <?php include 'parts/footer.php'; ?>
+
 </body>
 </html>

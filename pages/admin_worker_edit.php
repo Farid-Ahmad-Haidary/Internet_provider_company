@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $field = $_POST['field'] ?? $w['field'];
   $salary = floatval($_POST['salary'] ?? $w['salary']);
 
-  // determine desired username and ensure uniqueness (ignore the current user's own username)
   $desired = $mysqli->real_escape_string($name);
   $check = $mysqli->query("SELECT id FROM users WHERE username = '$desired' AND NOT (username = '" . $mysqli->real_escape_string($w['name']) . "') LIMIT 1");
   if ($check && $check->fetch_assoc()) {
@@ -29,27 +28,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_username = $desired;
   }
 
-  // Update workers table
   $mysqli->query("UPDATE workers SET name='" . $mysqli->real_escape_string($name) . "', password='" . $mysqli->real_escape_string($password) . "', field='" . $mysqli->real_escape_string($field) . "', salary=" . $salary . " WHERE id=$id");
 
-  // Sync users table:
-  // Try to update possible existing linked user records:
-  // - username could be 'worker{id}', or old name, or oldname.{id}
   $old_name_esc = $mysqli->real_escape_string($w['name']);
   $worker_id_username = 'worker' . $id;
-  // Update any user whose username references this worker to new_username and new password
   $mysqli->query("UPDATE users SET username='" . $new_username . "', password='" . $mysqli->real_escape_string($password) . "' WHERE username IN ('" . $mysqli->real_escape_string($worker_id_username) . "', '" . $old_name_esc . "', '" . $old_name_esc . "." . $id . "')");
 
-  // If no row updated above (rare), try to insert a new users row for this worker
   if ($mysqli->affected_rows === 0) {
-    // ensure username not taken now
     $ck2 = $mysqli->query("SELECT id FROM users WHERE username = '" . $new_username . "' LIMIT 1");
     if (!($ck2 && $ck2->fetch_assoc())) {
       $mysqli->query("INSERT INTO users (username,password,role) VALUES ('" . $new_username . "','" . $mysqli->real_escape_string($password) . "','worker')");
     }
   }
 
-  // refresh loaded worker row
   $res = $mysqli->query("SELECT * FROM workers WHERE id = $id LIMIT 1");
   $w = $res->fetch_assoc();
   $msg = 'Saved';
@@ -61,7 +52,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Edit Worker</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: #fff;
+    }
+
+    main.container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: #ffffffee;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    main.container h2 {
+      color: #044c47;
+      font-size: 24px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #044c47;
+      margin-top: 12px;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 4px;
+      border: 2px solid #0b9488;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #044c47;
+      box-shadow: 0 0 6px rgba(11, 148, 136, 0.3);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0b9488, #044c47);
+      color: #fff;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .success {
+      background: #0b9488;
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 
 <body>

@@ -140,16 +140,8 @@ $user = $_SESSION['user'];
 
   </div>
 </main>
+  <?php include 'parts/footer.php'; ?>
 
-<!-- FOOTER -->
-<footer style="
-    text-align:center;
-    padding:20px;
-    color:#666;
-    background:#f0f0f0;
-">
-  © 2025 Khawar Bridge Internet Company
-</footer>
 
 </body>
 </html>
