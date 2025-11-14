@@ -1,54 +1,60 @@
 <?php
 include __DIR__ . '/../includes/db.php';
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+if (empty($_SESSION['user'])) {
   header('Location: index.php?p=login');
   exit;
 }
 
 $msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $name = $_POST['name'] ?? '';
-  $password = $_POST['password'] ?? '';
-  $pkg = $_POST['activated_package'] ?? '';
-
-  $mysqli->query("INSERT INTO customers (name,password,activated_package) VALUES ('" . $mysqli->real_escape_string($name) . "','" . $mysqli->real_escape_string($password) . "','" . $mysqli->real_escape_string($pkg) . "')");
-  $cid = $mysqli->insert_id;
-
-  $desired = $mysqli->real_escape_string($name);
-  $check = $mysqli->query("SELECT id FROM users WHERE username = '" . $desired . "' LIMIT 1");
-  if ($check && $check->fetch_assoc()) {
-    $login_username = $mysqli->real_escape_string($name . '.' . $cid);
-  } else {
-    $login_username = $desired;
-  }
-
-  $mysqli->query("INSERT INTO users (username,password,role) VALUES ('" . $login_username . "','" . $mysqli->real_escape_string($password) . "','customer')");
-  $msg = 'Created. login username: ' . htmlspecialchars($login_username);
+    $name = $_POST['name'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $package = $_POST['package'] ?? '';
+    
+    // VULNERABLE INSERT - SQL Injection
+    $sql = "INSERT INTO customers (name, password, activated_package) VALUES ('$name', '$password', '$package')";
+    if ($mysqli->query($sql)) {
+        $msg = "Customer created successfully! ID: " . $mysqli->insert_id;
+    } else {
+        $msg = "Error: " . $mysqli->error;
+    }
 }
 ?>
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>Create Customer</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    input, button { width: 100%; padding: 8px; margin: 5px 0; }
+  </style>
 </head>
-
 <body>
-  <?php include 'parts/topbar.php'; ?>
+  <div style="background:#333;color:white;padding:15px;">
+    <a href="index.php?p=admin_customers" style="color:white;">← Back to Customers</a>
+  </div>
+
   <main class="container">
-    <h2>Create Customer</h2>
-    <?php if ($msg) echo '<div class="success">' . htmlspecialchars($msg) . '</div>'; ?>
+    <h2>Create New Customer</h2>
+    
+    <?php if ($msg): ?>
+        <div style="background:#d4edda;padding:10px;border-radius:4px;"><?= $msg ?></div>
+    <?php endif; ?>
+
     <form method="post">
-      <label>Name</label><input name="name">
-      <label>Password</label><input name="password">
-      <label>Activated Package</label><input name="activated_package">
-      <button>Create</button>
+        <label>Name:</label>
+        <input type="text" name="name" required>
+        
+        <label>Password:</label>
+        <input type="text" name="password" required>
+        
+        <label>Package:</label>
+        <input type="text" name="package" required>
+        
+        <button type="submit" style="background:#28a745;color:white;border:none;padding:10px;">Create Customer</button>
     </form>
   </main>
-  <?php include 'parts/footer.php'; ?>
 </body>
-
 </html>

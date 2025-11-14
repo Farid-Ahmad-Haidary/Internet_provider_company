@@ -1,13 +1,11 @@
 <?php include __DIR__ . '/../includes/db.php'; ?>
 <!doctype html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>Login</title>
     <link rel="stylesheet" href="assets/styles.css">
 </head>
-
 <body class="center">
     <div class="card">
         <h2>KHAWAR BRIDGE</h2>
@@ -15,17 +13,15 @@
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $u = $_POST['username'] ?? '';
             $p = $_POST['password'] ?? '';
-            // vulnerable SQL (no prepared statements)
-            $sql = "SELECT id, username, password, role FROM users WHERE username = '$u' LIMIT 1";
+            
+            // VULNERABLE SQL INJECTION - NO PROTECTION
+            $sql = "SELECT id, username, password, role FROM users WHERE username = '$u' AND password = '$p' LIMIT 1";
             $res = $mysqli->query($sql);
+            
             if ($res && $row = $res->fetch_assoc()) {
-                if ($p === $row['password']) {
-                    $_SESSION['user'] = $row;
-                    header('Location: index.php?p=dashboard');
-                    exit;
-                } else {
-                    $err = 'Wrong credentials';
-                }
+                $_SESSION['user'] = $row;
+                header('Location: index.php?p=dashboard');
+                exit;
             } else {
                 $err = 'Wrong credentials';
             }
@@ -39,5 +35,4 @@
         </form>
     </div>
 </body>
-
 </html>

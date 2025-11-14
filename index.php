@@ -1,5 +1,4 @@
 <?php
-// Simple index - place this folder in htdocs/internet_isp and open http://localhost/internet_isp/
 require_once __DIR__ . '/includes/db.php';
 session_start();
 

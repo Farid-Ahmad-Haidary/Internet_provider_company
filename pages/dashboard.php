@@ -1,10 +1,6 @@
 <?php
 include __DIR__ . '/../includes/db.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
-}
-
 if (empty($_SESSION['user'])) {
   header('Location: index.php?p=login');
   exit;
@@ -13,13 +9,11 @@ $user = $_SESSION['user'];
 ?>
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>Dashboard</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-
 <body><?php include 'parts/topbar.php'; ?>
   <main class="container">
     <h1>Welcome <?= htmlspecialchars($user['username']) ?></h1>
@@ -71,5 +65,4 @@ $user = $_SESSION['user'];
     </div>
   </main><?php include 'parts/footer.php'; ?>
 </body>
-
 </html>
